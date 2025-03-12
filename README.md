@@ -9,6 +9,66 @@ zkPassport is a decentralized identity system that lets users prove credentials 
 - **Cross-Chain Verification**: Verify credentials across different blockchains without revealing personal data
 - **Credential Management**: Request, store, and manage various types of verifiable credentials
 
+## 4. Mermaid Diagram Flow
+
+```mermaid
+graph TB
+    subgraph "User Authentication"
+        A[User] -->|Signs in with Social Account| B[zkLogin]
+        B -->|Generates Keypair & Nonce| C[OAuth Provider]
+        C -->|Returns JWT| D[zkLogin Proof Generation]
+        D -->|Creates zkProofs| E[User Authenticated]
+    end
+    
+    subgraph "Account Creation"
+        E -->|Creates Smart Wallet| F[Account Abstraction Service]
+        F -->|Deploys ERC-4337 Wallet| G[Smart Contract Wallet]
+    end
+    
+    subgraph "Credential Management"
+        A -->|Requests Credential| H[Credential Issuer]
+        H -->|Issues ZK Credential| I[Credential Service]
+        I -->|Stores Credential| J[User's zkPassport]
+    end
+    
+    subgraph "Cross-Chain Verification"
+        J -->|Selects Credential to Verify| K[Target Chain Selection]
+        K -->|Initiates Verification| L[zkBridge Service]
+        L -->|Generates Bridge Proof| M[Polyhedra zkBridge]
+        M -->|Submits Proof to Target Chain| N[Target Chain Verifier]
+        N -->|Verifies Without Revealing Data| O[Verification Result]
+        O -->|Grants Access to Service| P[DApp/Service on Target Chain]
+    end
+    
+    subgraph "Data Flow"
+        J -.->|ZK Proofs| L
+        G -.->|Signs Transactions| L
+    end
+    
+    style A fill:#f9f,stroke:#333,stroke-width:2px
+    style G fill:#bbf,stroke:#333,stroke-width:2px
+    style J fill:#bbf,stroke:#333,stroke-width:2px
+    style M fill:#bfb,stroke:#333,stroke-width:2px
+    style P fill:#fbb,stroke:#333,stroke-width:2px
+```
+
+The diagram illustrates the complete zkPassport system flow:
+
+1. User Authentication: The user authenticates via zkLogin using a social account, generating zero-knowledge proofs of their identity.
+
+2. Account Creation: Upon authentication, an ERC-4337 compliant smart contract wallet is created for the user.
+
+3. Credential Management: Users can request credentials from trusted issuers, which are stored in their zkPassport.
+
+4. Cross-Chain Verification: When a user needs to verify credentials on another chain:
+   - They select which credential to verify and on which target chain
+   - The zkBridge Service generates a bridge proof
+   - Polyhedra's zkBridge enables verification on the target chain
+   - The target chain verifies the credential without revealing personal data
+   - The user gains access to the desired service on the target chain
+
+This architecture creates a seamless, privacy-preserving identity system that works across multiple blockchain ecosystems.
+
 ## Technology Stack
 
 - **Frontend**: Next.js, React, TailwindCSS
